@@ -31,7 +31,7 @@ export class Model {
 
   readRec(opts) {
     const {
-      pagination: { perPage = "", page = "" },
+      pagination: { perPage = "", page = "" } = {},
       filter: { key, value } = { key: "", value: "" },
       sort: { by: sortBy, order = "desc" } = { by: "", order: "" },
     } = opts || {};
