@@ -1,0 +1,38 @@
+{
+  "name": "course-admin-api-server",
+  "version": "1.0.0",
+  "description": "api-server for course-admin",
+  "main": "index.mjs",
+  "type": "module",
+  "engines": {
+    "node": ">=12.16.1"
+  },
+  "scripts": {
+    "start:dev": "nodemon --experimental-modules index.mjs",
+    "start": "node --experimental-modules index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "api-server"
+  ],
+  "author": "astriskit <harry2office@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "cryptr": "^6.0.2",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "lowdb": "^1.0.0",
+    "nanoid": "^3.1.20",
+    "nodemon": "^2.0.6",
+    "passport": "^0.4.1",
+    "passport-http": "^0.3.0"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "db/*"
+    ]
+  }
+}
