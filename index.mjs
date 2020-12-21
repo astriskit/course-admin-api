@@ -107,8 +107,10 @@ addCrudRouter(app, "/user", Users, auth(AdminDigestKey));
 app.post("/login", express.json(), (req, res) => {
   if (req.body.username && req.body.password) {
     const [user] = Users.readRec({
-      key: "username",
-      value: req.body.username,
+      filter: {
+        key: "username",
+        value: req.body.username,
+      },
     });
     if (user && user.password === req.body.password) {
       return res.json({
