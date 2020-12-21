@@ -12,11 +12,11 @@ const getDBHandle = (db, adapterOpts) => {
 
   if (adapterOpts) {
     adapter = new FileSync(dbPath, {
-      defaultValue: { data: [] },
+      defaultValue: { data: [], count: 0 },
       ...adapterOpts,
     });
   } else {
-    adapter = new FileSync(dbPath, { defaultValue: { data: [] } });
+    adapter = new FileSync(dbPath, { defaultValue: { data: [], count: 0 } });
   }
   const dbHandle = lowDb(adapter);
   return dbHandle;
@@ -44,14 +44,15 @@ export class Model {
       data = data.orderBy(sortBy, order);
     }
     if (perPage && page) {
-      data = data.takeWhile((_, index) => {
-        const tillIndex = page * perPage;
-        let firstIndex = tillIndex - perPage + 1;
-        firstIndex = firstIndex < 0 ? 0 : firstIndex;
-        return index >= firstIndex && index <= tillIndex;
+      const tillIndex = page * perPage;
+      let firstIndex = tillIndex - perPage + 1;
+      firstIndex = firstIndex < 0 ? 0 : firstIndex;
+      data = data.filter((_, index) => {
+        const isValid = index >= firstIndex && index <= tillIndex;
+        return isValid;
       });
     }
-    return data.value();
+    return { data: data.value(), total: this.db.get("count").value() };
   }
 
   add(data) {
@@ -60,6 +61,8 @@ export class Model {
       .get("data")
       .push({ id, ...data })
       .write();
+    const count = this.db.get("count").value();
+    this.db.set("count", count + 1).write();
     return this.db.get("data").find({ id }).value();
   }
 
@@ -74,5 +77,7 @@ export class Model {
 
   delete(dataId) {
     this.db.get("data").remove({ id: dataId }).write();
+    const count = this.db.get("count").value();
+    this.db.set("count", count - 1).write();
   }
 }

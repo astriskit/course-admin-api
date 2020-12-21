@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start:dev": "nodemon --experimental-modules index.mjs",
-    "start": "node --experimental-modules index.mjs",
+    "start": "node --experimental-modules seed.mjs && node --experimental-modules index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

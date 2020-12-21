@@ -21,13 +21,14 @@ export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
     const filterValue = req.query.filter_value || undefined;
     const sortBy = req.query.sort_by || undefined;
     const order = req.query.sort_order || undefined;
+
     const data = req.model.readRec({
-      page,
-      perPage,
+      pagination: { page, perPage },
       filter: { key: filterKey, value: filterValue },
       sort: { sortBy, order },
     });
-    if (data.length) {
+
+    if (data.total && data.data.length) {
       return res.status(200).json(data);
     } else {
       return res.status(200).json([]);
@@ -36,7 +37,9 @@ export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
 
   app.get(listOne, authMw, (req, res) => {
     const id = req.params.id;
-    const record = req.model.readRec({ filter: { key: "id", value: id } });
+    const { data: record } = req.model.readRec({
+      filter: { key: "id", value: id },
+    });
     if (record.length) {
       return res.status(200).json(record[0]);
     } else {
@@ -61,7 +64,8 @@ export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
 
   app.delete(deleteOne, authMw, (req, res) => {
     const id = req.params.id;
-    if (req.model.readRec({ filter: { key: "id", value: id } }).length) {
+    const { data } = req.model.readRec({ filter: { key: "id", value: id } });
+    if (data && data.length) {
       req.model.delete(id);
       onDelete && onDelete(id);
       return res.status(204).json();
@@ -71,6 +75,7 @@ export const addCrudRouter = (app, key, model, authMw, onDelete = null) => {
 
   app.use((err, req, res, next) => {
     if (err) {
+      console.error(err);
       return res.status(500).send({
         message: err.message,
         display: `Internal server error on ${req.url}`,
