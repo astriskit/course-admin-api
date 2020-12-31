@@ -111,6 +111,11 @@ app.get("/me/:user", auth(NonAdminDigestKey), (req, res) => {
   return res.status(404).json({ message: "User not found." });
 });
 
+app.get("/", (req, res)=>{
+  const appUrl = "https://towering-buttered-lily.glitch.me/";
+  res.redirect(appUrl);
+})
+
 app.listen(port, () => {
   logger(`server started on host/${port}`);
 });
